@@ -9,7 +9,7 @@ https://github.com/goxr3plus/FX-BorderlessScene
 https://github.com/CatWithAWand/BorderlessSceneFX
 
 ## Demo
-[![Demo]({image-url})]({./demo/demo.webp} "Demo")
+![Demo](./demo/demo.webp)
 
 ## Requirements
 Tested with Java 17+ and Windows 11 (may not work on older Windows for now Java8 and old Windows support coming)
