@@ -12,14 +12,13 @@ https://github.com/CatWithAWand/BorderlessSceneFX
 ![Demo](./demo/demo.webp)
 
 ## Requirements
-Tested with Java 17+ and Windows 11 (may not work on older Windows for now Java8 and old Windows support coming)
+Tested with Java 8+ and Windows 11 (may not work on older Windows for now Java8 and old Windows support coming)
 
 ## Quick sample
 
     public BorderlessNative activateSnap(Stage primaryStage,Node moveNode,Node maximizeNode) {
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
-        borderlessNative.setMaximizeNode(maximizeNode);
         borderlessNative.makeWindowsBorderless("Sample");
         return borderlessNative;
     }
@@ -33,16 +32,21 @@ Configuration Type = DynamicLibrary .dll
 Windows SDK Version = 10.0 (may be downgraded to support Windows 10 or below)
 Platform Toolset = Visual Studio 2019 (v142)
 
-For Java 17
+### For Java 17
 
 C/C++ -> General -> Additional Include Directories C:\PathToJRE\zulu17.40.19-ca-fx-jdk17.0.6-win_x64\include; C:\PathToJRE\JRE\zulu17.40.19-ca-fx-jdk17.0.6-win_x64\include\win32
 
-
-For Java 8
+### For Java 8
 
 C/C++ -> General -> Additional Include Directories C:\PathToJRE\zulu8.70.0.23-ca-fx-jdk8.0.372-win_x64\include; C:\PathToJRE\JRE\zulu8.70.0.23-ca-fx-jdk8.0.372-win_x64\include\win32
 
+## Note
+
+You may need to install vcredist 2019 for making this library work
+
 ## TODO Support
-Clean sln solution
-Support JDK8 and JFX8 OK 
-Test on Windows 7 and 10
+- [ ] Clean sln solution
+- [x] Support JDK8 and JFX8 
+- [ ] Test on Windows 7 and 10
+- [ ] Release on Maven
+
