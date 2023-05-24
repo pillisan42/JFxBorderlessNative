@@ -20,7 +20,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
     //std::cout << "jniOnLoad" << std::endl;
     jvmRef = jvm;
 
-    return JNI_VERSION_10;
+
+    //return JNI_VERSION_10;
+    return JNI_VERSION_1_8;
 }
 auto maximized(HWND hwnd) -> bool {
     WINDOWPLACEMENT placement;
@@ -40,7 +42,7 @@ auto adjust_maximized_client_rect(HWND window, RECT& rect) -> void {
         return;
     }
 
-    auto monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTONULL);
+    auto monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
     if (!monitor) {
         return;
     }
@@ -61,7 +63,8 @@ JNIEnv* getJniEnv() {
     //Get environment from cached jvm
     JNIEnv* env;
 
-    int envStat = jvmRef->GetEnv((void**)&env, JNI_VERSION_10);
+    //int envStat = jvmRef->GetEnv((void**)&env, JNI_VERSION_10);
+    int envStat = jvmRef->GetEnv((void**)&env, JNI_VERSION_1_8);
 
     //std::cout << "getJniEnv " << envStat<< std::endl;
     bool attached = false;
@@ -203,16 +206,29 @@ LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
             return 0;
         }*/
 
-        //std::cout << "WM_SYSCOMMAND wParam: " << wParam << std::endl;
+        std::cout << "WM_SYSCOMMAND wParam: " << wParam << std::endl;
 
         break;
     case WM_NCCALCSIZE:
         if (lParam)
         {   
             if (maximized(hWnd)) {
-                auto& params = *reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-                adjust_maximized_client_rect(hWnd, params.rgrc[0]);
+                //auto& params = *reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+                //adjust_maximized_client_rect(hWnd, params.rgrc[0]);
+                JNIEnv* env = getJniEnv();
+                if (thisObj == NULL) {
+                    std::cout << "maximizeOrRestore thisObj is null" << std::endl;
+                }
+                else {
+                    jclass cls = env->GetObjectClass(thisObj);
+                    if (env != NULL) {
+                        jmethodID maximizeOrRestoreVal = env->GetMethodID(cls, "maximizeOrRestore", "()V");
+                        //std::cout << "methodId" << std::endl;
+                        env->CallBooleanMethod(thisObj, maximizeOrRestoreVal);
+                    }
+                }
             } else {
+                std::cout << "WM_SYSCOMMAND wParam: " << wParam << std::endl;
                 NCCALCSIZE_PARAMS* sz = (NCCALCSIZE_PARAMS*)lParam;
                 sz->rgrc[0].left += border_thickness.left;
                 sz->rgrc[0].right -= border_thickness.right;

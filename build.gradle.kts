@@ -23,3 +23,7 @@ dependencies {
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
+
+tasks.withType<JavaCompile> {
+    options.release.set(8)
+}

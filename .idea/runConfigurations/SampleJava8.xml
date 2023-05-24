@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SampleJava8" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../300.APPS/JRE/zulu8.70.0.23-ca-fx-jdk8.0.372-win_x64" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="fr.pilli.Sample" />
+    <module name="fr.pilli.AeroBorderless.test" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=.\libs\Java8" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="fr.pilli.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

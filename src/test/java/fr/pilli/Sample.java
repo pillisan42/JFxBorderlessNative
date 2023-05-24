@@ -5,19 +5,27 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class Sample extends Application {
+
+
 
     static   //static initializer code
     {
-        System.loadLibrary("JFxBorderlessNative");
+        //BorderlessNative.loadJarDll("/libs/java8/x64/JFxBorderlessNative.dll","deploy/java8/x64/JFxBorderlessNative.dll");
+        BorderlessNative.loadJarDll("/libs/java8/x86/JFxBorderlessNative.dll","deploy/java8/x86/JFxBorderlessNative.dll");
+        //BorderlessNative.loadJarDll("/libs/java8/x86/JFxBorderlessNative.dll",null);
+        //BorderlessNative.loadJarDll("/libs/java8/x64/JFxBorderlessNative.dll",null);
+        //System.loadLibrary("JFxBorderlessNative");
     }
 
 
@@ -48,7 +56,11 @@ public class Sample extends Application {
         VBox vBox=new VBox();
         root.getChildren().add(vBox);
         HBox headerHBox=new HBox();
+        StackPane movePane=new StackPane();
+        HBox.setHgrow(movePane,Priority.ALWAYS);
+        movePane.setStyle("-fx-background-color: red;");
         headerHBox.setAlignment(Pos.CENTER_RIGHT);
+        headerHBox.getChildren().add(movePane);
         headerHBox.getChildren().add(minimizeButton);
         headerHBox.getChildren().add(maximizeButton);
         headerHBox.getChildren().add(closeButton);
@@ -61,7 +73,7 @@ public class Sample extends Application {
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
-        BorderlessNative borderlessNative=activateSnap(primaryStage,headerHBox,maximizeButton);
+        BorderlessNative borderlessNative=activateSnap(primaryStage,movePane,maximizeButton);
         headerHBox.setOnMouseClicked(mouseEvent -> borderlessNative.maximizeOrRestore());
         maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
     }
@@ -69,7 +81,7 @@ public class Sample extends Application {
     public BorderlessNative activateSnap(Stage primaryStage,Node moveNode,Node maximizeNode) {
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
-        borderlessNative.setMaximizeNode(maximizeNode);
+        //borderlessNative.setMaximizeNode(maximizeNode);
         borderlessNative.makeWindowsBorderless("Sample");
         return borderlessNative;
     }

@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Sample" type="Application" factoryName="Application">
+  <configuration default="false" name="SampleJava17" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="fr.pilli.Sample" />
-    <module name="AeroBorderless.test" />
-    <option name="VM_PARAMETERS" value="-Djava.library.path=J:\P\200.DEV\AeroBorderless\AeroBorderless\libs" />
+    <module name="fr.pilli.AeroBorderless.test" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=.\libs\Java17" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="fr.pilli.*" />
