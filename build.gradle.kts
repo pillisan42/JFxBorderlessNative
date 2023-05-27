@@ -8,6 +8,7 @@ plugins {
 
 group = "io.github.pillisan42"
 version = "1.0.2-SNAPSHOT"
+
 repositories {
     mavenCentral()
 }
@@ -44,11 +45,12 @@ tasks.create<Jar>("sourcesJar") {
 publishing {
     repositories {
         maven {
+            name = "ossrh"
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
+            /*credentials {
                 username = project.findProperty("ossrhUsername") as String
                 password = project.findProperty("ossrhPassword") as String
-            }
+            }*/
         }
     }
     publications {
