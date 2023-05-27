@@ -3,9 +3,10 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.13"
     id("net.researchgate.release") version "3.0.2"
     `maven-publish`
+    signing
 }
 
-group = "fr.pilli"
+group = "io.github.pillisan42"
 
 repositories {
     mavenCentral()
@@ -29,16 +30,26 @@ tasks.withType<JavaCompile> {
     options.release.set(8)
 }
 
+tasks.create<Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.getByName("javadoc"))
+}
+
+tasks.create<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main)
+}
+
 publishing {
     repositories {
         maven {
-            url = uri("https://repo.maven.apache.org/maven2/")
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
         }
     }
     publications {
         create<MavenPublication>(project.name) {
-            groupId = "fr.pilli"
-            artifactId = "jfx-borderless-native"
+            groupId = "io.github.pillisan42"
+            artifactId = project.name
             version = project.findProperty("version") as String
             from(components["java"])
         }
@@ -74,6 +85,6 @@ publishing {
 
 release {
     //tagTemplate.set("JFxBorderlessNative_${version}")
-    buildTasks.set(listOf("build","publish"))
+    buildTasks.set(listOf("build","javadocJar","sourcesJar","publish"))
     versionPropertyFile.set("gradle.properties")
 }
