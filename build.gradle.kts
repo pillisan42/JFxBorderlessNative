@@ -95,6 +95,6 @@ publishing {
 release {
     //versionProperties.set(listOf(version))
     //tagTemplate.set("JFxBorderlessNative_${version}")
-    buildTasks.set(listOf("build",/*"javadocJar","sourcesJar",*/"publish"))
+    buildTasks.set(listOf("build","javadocJar","sourcesJar","publish"))
     versionPropertyFile.set("gradle.properties")
 }
