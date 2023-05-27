@@ -14,8 +14,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * The type Borderless native.
+ */
 public class BorderlessNative {
 
+    /**
+     * Load jar dll.
+     *
+     * @param name       the name
+     * @param targetFile the target file
+     */
     public static void loadJarDll(String name, String targetFile) {
         File dllToCopy;
 
@@ -28,7 +37,6 @@ public class BorderlessNative {
 
         } else {
             dllToCopy = new File(targetFile);
-
         }
         File parentDirectory = dllToCopy.getParentFile();
         if (!parentDirectory.exists()) {
@@ -59,22 +67,54 @@ public class BorderlessNative {
 
     private Rectangle2D previousBound = null;
 
+    /**
+     * Instantiates a new Borderless native.
+     *
+     * @param stage the stage
+     */
     public BorderlessNative(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Sets caption node.
+     *
+     * @param captionNode the caption node
+     */
     public void setCaptionNode(Node captionNode) {
         this.captionNode = captionNode;
     }
 
+    /**
+     * Sets maximize node.
+     *
+     * @param maximizeNode the maximize node
+     */
     public void setMaximizeNode(Node maximizeNode) {
         this.maximizeNode = maximizeNode;
     }
 
+    /**
+     * Make windows borderless.
+     *
+     * @param windowName the window name
+     */
     public native void makeWindowsBorderless(final String windowName);
 
+    /**
+     * Sets window draggable.
+     *
+     * @param isDraggable the is draggable
+     */
     public native void setWindowDraggable(boolean isDraggable);
 
+    /**
+     * Perce of 2 rect double.
+     *
+     * @param r1 the r 1
+     * @param r2 the r 2
+     * @return the double
+     */
     public double perceOf2Rect(Rectangle2D r1, Rectangle2D r2){
         java.awt.geom.Rectangle2D r1a = new java.awt.geom.Rectangle2D.Double(r1.getMinX(),r1.getMinY(),r1.getWidth(),r1.getHeight());
         java.awt.geom.Rectangle2D r1b = new java.awt.geom.Rectangle2D.Double(r2.getMinX(),r2.getMinY(),r2.getWidth(),r2.getHeight());
@@ -82,6 +122,13 @@ public class BorderlessNative {
 
     }
 
+    /**
+     * Perce of 2 rect double.
+     *
+     * @param r1 the r 1
+     * @param r2 the r 2
+     * @return the double
+     */
     public double perceOf2Rect(java.awt.geom.Rectangle2D r1, java.awt.geom.Rectangle2D r2){
         java.awt.geom.Rectangle2D r = new java.awt.geom.Rectangle2D.Double();
         java.awt.geom.Rectangle2D.intersect(r1, r2, r);
@@ -91,6 +138,9 @@ public class BorderlessNative {
         return (fr1 == 0 || f <= 0) ? 0 : (f / fr1) * 100;          // overlap percentage
     }
 
+    /**
+     * Maximize or restore.
+     */
     public void maximizeOrRestore() {
         Rectangle2D currentBound = getStageBound();
         Screen selectedScreen = getSelectedScreen(currentBound);
@@ -108,22 +158,6 @@ public class BorderlessNative {
             stage.setWidth(primaryScreenBounds.getWidth());
             stage.setHeight(primaryScreenBounds.getHeight());
         }
-        /*if (previousBound == null) {
-            Rectangle2D currentBound = getStageBound();
-            Screen selectedScreen = getSelectedScreen();
-            Rectangle2D primaryScreenBounds = selectedScreen.getVisualBounds();
-            previousBound = currentBound;
-            stage.setX(primaryScreenBounds.getMinX());
-            stage.setY(primaryScreenBounds.getMinY());
-            stage.setWidth(primaryScreenBounds.getWidth());
-            stage.setHeight(primaryScreenBounds.getHeight());
-        } else {
-            stage.setX(previousBound.getMinX());
-            stage.setY(previousBound.getMinY());
-            stage.setWidth(previousBound.getWidth());
-            stage.setHeight(previousBound.getHeight());
-            previousBound = null;
-        }*/
     }
 
     private Rectangle2D getStageBound() {
@@ -149,6 +183,13 @@ public class BorderlessNative {
         return selectedScreen;
     }
 
+    /**
+     * Is maximized boolean.
+     *
+     * @param screen       the screen
+     * @param currentBound the current bound
+     * @return the boolean
+     */
     public boolean isMaximized(Screen screen,Rectangle2D currentBound) {
         boolean result=false;
         Rectangle2D primaryScreenBounds = screen.getVisualBounds();
@@ -156,6 +197,14 @@ public class BorderlessNative {
         return result;
     }
 
+    /**
+     * Pick screen node.
+     *
+     * @param node    the node
+     * @param screenX the screen x
+     * @param screenY the screen y
+     * @return the node
+     */
     public static Node pickScreen(Node node, double screenX, double screenY) {
         Bounds bounds = node.localToScreen(node.getLayoutBounds());
         //Point2D p = node.sceneToLocal(sceneX, sceneY, true /* rootScene */);
@@ -192,6 +241,13 @@ public class BorderlessNative {
         return node;
     }
 
+    /**
+     * Is mouse in caption boolean.
+     *
+     * @param x the x
+     * @param y the y
+     * @return the boolean
+     */
     public boolean isMouseInCaption(int x, int y) {
         //System.out.println("isMouseInCaption() x: "+x+", y:"+y+", isCaptionPressed: "+isCaptionPressed.get());
         if (captionNode != null) {
@@ -202,6 +258,13 @@ public class BorderlessNative {
         }
     }
 
+    /**
+     * Is mouse in maximize button boolean.
+     *
+     * @param x the x
+     * @param y the y
+     * @return the boolean
+     */
     public boolean isMouseInMaximizeButton(int x, int y) {
         //System.out.println("isMouseInCaption() x: "+x+", y:"+y+", isCaptionPressed: "+isCaptionPressed.get());
         if (maximizeNode != null) {

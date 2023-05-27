@@ -37,7 +37,7 @@ tasks.create<Jar>("javadocJar") {
 
 tasks.create<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
-    from(sourceSets.main)
+    from(sourceSets.main.get().allSource)
 }
 
 
