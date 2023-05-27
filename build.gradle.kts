@@ -30,6 +30,11 @@ tasks.withType<JavaCompile> {
 }
 
 publishing {
+    repositories {
+        maven {
+            url = uri("https://repo.maven.apache.org/maven2/")
+        }
+    }
     publications {
         create<MavenPublication>("mavenJava") {
             pom {
@@ -60,7 +65,7 @@ publishing {
             groupId = "fr.pilli"
             artifactId = "jfx-borderless-native"
             version = project.findProperty("version") as String
-            from(components["jar"])
+            from(components["java"])
         }
     }
 }
