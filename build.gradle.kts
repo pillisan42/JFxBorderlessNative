@@ -40,13 +40,9 @@ tasks.create<Jar>("sourcesJar") {
     from(sourceSets.main)
 }
 
-configure<SigningExtension> {
-    sign(publishing.publications["jfx-borderless-native"])
-}
 
 publishing {
     repositories {
-
         maven {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
@@ -89,6 +85,9 @@ publishing {
                 }
             }
         }
+    }
+    configure<SigningExtension> {
+        sign(publishing.publications["jfx-borderless-native"])
     }
 }
 
