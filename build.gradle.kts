@@ -36,7 +36,13 @@ publishing {
         }
     }
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>(project.name) {
+            groupId = "fr.pilli"
+            artifactId = "jfx-borderless-native"
+            version = project.findProperty("version") as String
+            from(components["java"])
+        }
+        withType<MavenPublication> {
             pom {
                 name.set("JFxBorderlessNative")
                 description.set("This library provide true support of Windows 10 Aero Snap On JavaFx" +
@@ -62,10 +68,6 @@ publishing {
                     url.set("https://github.com/pillisan42/JFxBorderlessNative")
                 }
             }
-            groupId = "fr.pilli"
-            artifactId = "jfx-borderless-native"
-            version = project.findProperty("version") as String
-            from(components["java"])
         }
     }
 }
