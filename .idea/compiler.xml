@@ -2,7 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
+      <module name="AeroBorderless.main" target="1.8" />
       <module name="fr.pilli.AeroBorderless.test" target="1.8" />
+      <module name="io.github.pillisan42.AeroBorderless.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
