@@ -60,7 +60,7 @@ publishing {
             groupId = "fr.pilli"
             artifactId = "jfx-borderless-native"
             version = project.findProperty("version") as String
-            from(components["java"])
+            from(components["jar"])
         }
     }
 }
