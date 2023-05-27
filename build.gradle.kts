@@ -35,7 +35,7 @@ tasks.withType<JavaCompile> {
     options.release.set(8)
 }
 
-tasks.create<Jar>("javadocJar") {
+/*tasks.create<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
     from(tasks.getByName("javadoc"))
 }
@@ -43,7 +43,7 @@ tasks.create<Jar>("javadocJar") {
 tasks.create<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
-}
+}*/
 
 
 publishing {
@@ -100,6 +100,6 @@ publishing {
 release {
     //versionProperties.set(listOf(version))
     //tagTemplate.set("JFxBorderlessNative_${version}")
-    buildTasks.set(listOf("build","javadocJar","sourcesJar","publish"))
+    buildTasks.set(listOf("build","publish"))
     versionPropertyFile.set("gradle.properties")
 }
