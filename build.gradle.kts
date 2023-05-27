@@ -68,7 +68,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        id.set("pilli")
+                        id.set("pillisan42")
                         name.set("Pilli")
                         email.set("pillisan42@gmail.com")
                     }
