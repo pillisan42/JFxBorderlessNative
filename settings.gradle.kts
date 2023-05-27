@@ -1,2 +1,2 @@
-rootProject.name = "AeroBorderless"
+rootProject.name = "jfx-borderless-native"
 
