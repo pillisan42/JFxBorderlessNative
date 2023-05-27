@@ -22,6 +22,11 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
 }
