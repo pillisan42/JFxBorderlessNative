@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.pillisan42"
-
+version = "1.0.2-SNAPSHOT"
 repositories {
     mavenCentral()
 }
@@ -40,16 +40,25 @@ tasks.create<Jar>("sourcesJar") {
     from(sourceSets.main)
 }
 
+configure<SigningExtension> {
+    sign(publishing.publications["jfx-borderless-native"])
+}
+
 publishing {
     repositories {
+
         maven {
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            /*credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }*/
         }
     }
     publications {
-        create<MavenPublication>(project.name) {
+        create<MavenPublication>("jfx-borderless-native") {
             groupId = "io.github.pillisan42"
-            artifactId = project.name
+            artifactId = "jfx-borderless-native"
             version = project.findProperty("version") as String
             from(components["java"])
         }
@@ -69,7 +78,7 @@ publishing {
                 developers {
                     developer {
                         id.set("pillisan42")
-                        name.set("Pilli")
+                        name.set("pillisan42")
                         email.set("pillisan42@gmail.com")
                     }
                 }
@@ -84,6 +93,7 @@ publishing {
 }
 
 release {
+    //versionProperties.set(listOf(version))
     //tagTemplate.set("JFxBorderlessNative_${version}")
     buildTasks.set(listOf("build",/*"javadocJar","sourcesJar",*/"publish"))
     versionPropertyFile.set("gradle.properties")
