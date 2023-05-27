@@ -7,7 +7,6 @@ plugins {
 }
 
 group = "io.github.pillisan42"
-version = "1.0.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
