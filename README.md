@@ -12,11 +12,31 @@ https://github.com/CatWithAWand/BorderlessSceneFX
 ![Demo](./demo/demo.webp)
 
 ## Requirements
-Tested with Java 8+ and Windows 11 (may not work on older Windows for now Java8 and old Windows support coming)
+Tested with Java 8+ and Windows 11 (may not work on older Windows for now old Windows 10 support coming)
+
+## Import in your project
+
+    implementation("io.github.pillisan42:jfx-borderless-native:1.0.6")
 
 ## Quick sample
 
-    public BorderlessNative activateSnap(Stage primaryStage,Node moveNode,Node maximizeNode) {
+    static   //static initializer code
+    {
+        BorderlessNative.loadJarDll("deploy");
+    }
+
+    @Override
+    public void start(final Stage primaryStage) {
+        [...]
+        Scene scene=new Scene(root, 300, 250, Color.RED);
+        primaryStage.setScene(scene);
+        BorderlessNative borderlessNative=showBorderlessAeroSnap(primaryStage,movePane);
+        maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
+    }
+
+    public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node moveNode) {
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.show();
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
         borderlessNative.makeWindowsBorderless("Sample");
@@ -24,7 +44,7 @@ Tested with Java 8+ and Windows 11 (may not work on older Windows for now Java8 
     }
 
 To run the sample clone this repository and open it from intellij and run the sample
-java -Djava.library.path=<yourPath>\AeroBorderless\libs fr.pilli.Sample
+java io.github.pillisan42.Sample
 
 ## Visual Studio Params
 Configuration Properties
@@ -45,8 +65,9 @@ C/C++ -> General -> Additional Include Directories C:\PathToJRE\zulu8.70.0.23-ca
 You may need to install vcredist 2019 for making this library work
 
 ## TODO Support
-- [ ] Clean sln solution
+- [x] Clean sln solution
 - [x] Support JDK8 and JFX8 
+- [x] Release on Maven central
+- [X] Stabilisation
 - [ ] Test on Windows 7 and 10
-- [ ] Release on Maven
 
