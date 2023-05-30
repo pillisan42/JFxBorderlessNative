@@ -12,11 +12,11 @@ https://github.com/CatWithAWand/BorderlessSceneFX
 ![Demo](./demo/demo.webp)
 
 ## Requirements
-Tested with Java 8+ and Windows 11 (may not work on older Windows for now old Windows 10 support coming)
+Tested with Java 8+ and Windows 7,10 and 11
 
 ## Import in your project
 
-    implementation("io.github.pillisan42:jfx-borderless-native:1.0.6")
+    implementation("io.github.pillisan42:jfx-borderless-native:1.0.7")
 
 ## Quick sample
 
@@ -34,7 +34,7 @@ Tested with Java 8+ and Windows 11 (may not work on older Windows for now old Wi
         maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
     }
 
-    public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node moveNode) {
+    public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node... moveNode) {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
@@ -69,5 +69,5 @@ You may need to install vcredist 2019 for making this library work
 - [x] Support JDK8 and JFX8 
 - [x] Release on Maven central
 - [X] Stabilisation
-- [ ] Test on Windows 7 and 10
+- [X] Test on Windows 7 and 10
 
