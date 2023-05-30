@@ -44,33 +44,29 @@ public class BorderlessNative {
         String dllLocation = null;
         if (Objects.equals(arch, THIRTY_TWO)) {
             sourceLocation = JAVA8_32_BITS_DLL_RESOURCE;
-            dllLocation=JAVA8_32_BITS_DLL;
+            dllLocation = JAVA8_32_BITS_DLL;
         } else if (Objects.equals(arch, SIXTY_FOUR)) {
             sourceLocation = JAVA8_64_BITS_DLL_RESOURCE;
-            dllLocation=JAVA8_64_BITS_DLL;
+            dllLocation = JAVA8_64_BITS_DLL;
         } else {
             System.err.println("Failed to determine architecture to load JFxBorderlessNative.dll");
         }
         if (sourceLocation != null) {
             if (targetFolderNullable == null) {
-                String[] split = sourceLocation.split("/");
-                String simpleName = split[split.length - 1];
-                //dllToCopy = File.createTempFile("abc", simpleName);
                 targetFolderNonNull = new File(System.getProperty("java.io.tmpdir") + "/" + sourceLocation);
-                System.out.println("simpleName: " + simpleName + " absolutePath: " + targetFolderNonNull.getAbsolutePath());
             } else {
                 targetFolderNonNull = new File(targetFolderNullable);
             }
             File targetLocation = new File(targetFolderNonNull + "/" + dllLocation);
             File parentDirectory = targetLocation.getParentFile();
             if (!parentDirectory.exists()) {
-                if(!parentDirectory.mkdirs()) {
-                    System.err.println("Failed to create "+parentDirectory.getAbsolutePath());
+                if (!parentDirectory.mkdirs()) {
+                    System.err.println("Failed to create " + parentDirectory.getAbsolutePath());
                 }
             }
             if (!targetLocation.exists()) {
                 try (InputStream in = BorderlessNative.class.getResourceAsStream(sourceLocation)) {
-                    if(in!=null) {
+                    if (in != null) {
                         try (FileOutputStream fos = new FileOutputStream(targetLocation)) {
                             byte[] buffer = new byte[1024];
                             int read;
@@ -89,7 +85,7 @@ public class BorderlessNative {
 
     private Node maximizeNode;
 
-    private Node captionNode;
+    private Node[] captions;
 
     private final Stage stage;
 
@@ -121,10 +117,10 @@ public class BorderlessNative {
     /**
      * Sets caption node.
      *
-     * @param captionNode the caption node
+     * @param captions the caption node
      */
-    public void setCaptionNode(Node captionNode) {
-        this.captionNode = captionNode;
+    public void setCaptionNode(Node... captions) {
+        this.captions = captions;
     }
 
     /**
@@ -248,40 +244,27 @@ public class BorderlessNative {
      * @param screenY the screen y
      * @return the node
      */
-    public static Node pickScreen(Node node, double screenX, double screenY) {
+    public static Node getTopNodeUnderMouse(Node node, double screenX, double screenY) {
         Bounds bounds = node.localToScreen(node.getLayoutBounds());
-        //Point2D p = node.sceneToLocal(sceneX, sceneY, true /* rootScene */);
-
         // check if the given node has the point inside it, or else we drop out
         if (!bounds.contains(screenX, screenY)) return null;
 
-        // at this point we know that _at least_ the given node is a valid
-        // answer to the given point, so we will return that if we don't find
-        // a better child option
+        Node result = node;
         if (node instanceof Parent) {
-            // we iterate through all children in reverse order, and stop when we find a match.
-            // We do this as we know the elements at the end of the list have a higher
-            // z-order, and are therefore the better match, compared to children that
-            // might also intersect (but that would be underneath the element).
-            Node bestMatchingChild = null;
             List<Node> children = ((Parent) node).getChildrenUnmodifiable();
-
-            for (int i = children.size() - 1; i >= 0; i--) {
-                Node child = children.get(i);
-                Bounds childBounds = child.localToScreen(node.getLayoutBounds());
-
+            for (Node child : children) {
+                Bounds childBounds = child.localToScreen(child.getLayoutBounds());
                 if (child.isVisible() && !child.isMouseTransparent() && childBounds.contains(screenX, screenY)) {
-                    bestMatchingChild = child;
-                    break;
+                    Node subChild = getTopNodeUnderMouse(child, screenX, screenY);
+                    if (subChild != null) {
+                        result = subChild;
+                    } else {
+                        result = child;
+                    }
                 }
             }
-
-            if (bestMatchingChild != null) {
-                return pickScreen(bestMatchingChild, screenX, screenY);
-            }
         }
-
-        return node;
+        return result;
     }
 
     /**
@@ -293,13 +276,17 @@ public class BorderlessNative {
      */
     @SuppressWarnings("unused") // false positive JNI Method called from native
     public boolean isMouseInCaption(int x, int y) {
-        //System.out.println("isMouseInCaption() x: "+x+", y:"+y+", isCaptionPressed: "+isCaptionPressed.get());
-        if (captionNode != null) {
-            Node pickedNode = pickScreen(captionNode, x, y);
-            return captionNode.equals(pickedNode);
-        } else {
-            return false;
+        if (captions != null) {
+            for (Node captionNode : captions) {
+                Node pickedNode = getTopNodeUnderMouse(captionNode, x, y);
+                String pickedId = pickedNode != null ? pickedNode.getId() : null;
+                boolean inCaption = captionNode.equals(pickedNode);
+                if (inCaption) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     /**
@@ -311,9 +298,8 @@ public class BorderlessNative {
      */
     @SuppressWarnings("unused") // false positive JNI Method called from native
     public boolean isMouseInMaximizeButton(int x, int y) {
-        //System.out.println("isMouseInCaption() x: "+x+", y:"+y+", isCaptionPressed: "+isCaptionPressed.get());
         if (maximizeNode != null) {
-            Node pickedNode = pickScreen(maximizeNode, x, y);
+            Node pickedNode = getTopNodeUnderMouse(maximizeNode, x, y);
             return maximizeNode.equals(pickedNode);
         } else {
             return false;

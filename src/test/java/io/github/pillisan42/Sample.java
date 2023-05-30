@@ -32,9 +32,12 @@ public class Sample extends Application {
         primaryStage.setTitle("Sample");
         Button closeButton = new Button();
         closeButton.setText("X");
+        closeButton.setId("close");
         Button maximizeButton = new Button();
+        maximizeButton.setId("maximize");
         maximizeButton.setText("O");
         Button minimizeButton = new Button();
+        minimizeButton.setId("minimize");
         minimizeButton.setText("_");
         minimizeButton.setOnAction(event -> primaryStage.setIconified(true));
         Button captionButton = new Button();
@@ -49,11 +52,13 @@ public class Sample extends Application {
         HBox headerHBox=new HBox();
         StackPane movePane=new StackPane();
         HBox.setHgrow(movePane,Priority.ALWAYS);
-        movePane.setStyle("-fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px, -fx-max-height: 40px; -fx-border-color : #00000000 #00000000 grey #00000000");
-        minimizeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px, -fx-max-height: 40px; -fx-border-color : #00000000 #00000000 grey #00000000");
-        maximizeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px, -fx-max-height: 40px; -fx-border-color : #00000000 #00000000 grey #00000000");
-        closeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px, -fx-max-height: 40px; -fx-border-color : #00000000 #00000000 grey #00000000");
+        headerHBox.setStyle("-fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px; -fx-max-height: 40px; -fx-border-color: #00000000 #00000000 grey #00000000;");
+        movePane.setStyle("-fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px; -fx-max-height: 40px; -fx-border-color: #00000000 #00000000 grey #00000000;");
+        minimizeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px; -fx-max-height: 40px; -fx-border-color: #00000000 #00000000 grey #00000000;");
+        maximizeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px; -fx-max-height: 40px;  -fx-border-color: #00000000 #00000000 grey #00000000;");
+        closeButton.setStyle("-fx-text-fill: white; -fx-background-color: #001144; -fx-min-height: 40px; -fx-pref-height: 40px; -fx-max-height: 40px; -fx-border-color: #00000000 #00000000 grey #00000000;");
         headerHBox.setAlignment(Pos.CENTER_RIGHT);
+        headerHBox.setSpacing(10);
         headerHBox.getChildren().add(movePane);
         headerHBox.getChildren().add(minimizeButton);
         headerHBox.getChildren().add(maximizeButton);
@@ -65,11 +70,11 @@ public class Sample extends Application {
         vBox.getChildren().add(stackPane);
         Scene scene=new Scene(root, 300, 250, Color.RED);
         primaryStage.setScene(scene);
-        BorderlessNative borderlessNative=showBorderlessAeroSnap(primaryStage,movePane);
+        BorderlessNative borderlessNative=showBorderlessAeroSnap(primaryStage,headerHBox,movePane);
         maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
     }
 
-    public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node moveNode) {
+    public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node... moveNode) {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.show();
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
