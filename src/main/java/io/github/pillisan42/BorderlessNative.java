@@ -186,10 +186,12 @@ public class BorderlessNative {
         Rectangle2D currentBound = getStageBound();
         Screen selectedScreen = getSelectedScreen(currentBound);
         if (isMaximized(selectedScreen, currentBound)) {
-            stage.setX(previousBound.getMinX());
-            stage.setY(previousBound.getMinY());
-            stage.setWidth(previousBound.getWidth());
-            stage.setHeight(previousBound.getHeight());
+            if(previousBound!=null) {
+                stage.setX(previousBound.getMinX());
+                stage.setY(previousBound.getMinY());
+                stage.setWidth(previousBound.getWidth());
+                stage.setHeight(previousBound.getHeight());
+            }
             previousBound = null;
         } else {
             Rectangle2D primaryScreenBounds = selectedScreen.getVisualBounds();
@@ -267,6 +269,7 @@ public class BorderlessNative {
         return result;
     }
 
+
     /**
      * Is mouse in caption boolean.
      *
@@ -298,11 +301,13 @@ public class BorderlessNative {
      */
     @SuppressWarnings("unused") // false positive JNI Method called from native
     public boolean isMouseInMaximizeButton(int x, int y) {
+        boolean result;
         if (maximizeNode != null) {
-            Node pickedNode = getTopNodeUnderMouse(maximizeNode, x, y);
-            return maximizeNode.equals(pickedNode);
+            Bounds childBounds = maximizeNode.localToScreen(maximizeNode.getLayoutBounds());
+            result= childBounds.contains(x,y);
         } else {
-            return false;
+            result= false;
         }
+        return result;
     }
 }

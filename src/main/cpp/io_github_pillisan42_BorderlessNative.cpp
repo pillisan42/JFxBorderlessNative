@@ -5,13 +5,22 @@
 #include <winuser.h>
 #include <windowsx.h>
 #include <Dwmapi.h>
+#include <map>
 #pragma comment(lib, "UxTheme.lib")
 #pragma comment(lib, "dwmapi.lib")
 
+using namespace std;
 
-bool draggable = false;
-jobject thisObj;
-jmethodID* isMouseInCaption;
+class WindowData {
+    public:
+        string title;
+        HWND hwnd;
+        WNDPROC prevWndProc;
+        jobject thisObject;
+};
+
+map<HWND, WindowData> windowDataByWindowHandle;
+map<string, WindowData> windowDataByWindowTitle;
 JavaVM* jvmRef;
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
@@ -115,12 +124,12 @@ LRESULT hit_test(HWND handle,POINT cursor) {
     bool inCaption = false;
     bool inMaximizeButton = false;
     JNIEnv* env=getJniEnv();
-    if (isMouseInCaption == NULL) {
-        std::cout << "isMouseInCaption is null" << std::endl;
-    } else if (thisObj == NULL) {
-        std::cout << "thisObj is null" << std::endl;
+    WindowData windowData=windowDataByWindowHandle[handle];
+    if (windowData.thisObject == NULL) {
+        std::cout << "thisObject is null" << std::endl;
     } else {
         if (env != NULL) {
+            jobject thisObj = windowData.thisObject;
             jclass cls = env->GetObjectClass(thisObj);
             if (cls != NULL) {
                 jmethodID isMouseInCaptionVal = env->GetMethodID(cls, "isMouseInCaption", "(II)Z");
@@ -146,8 +155,6 @@ LRESULT hit_test(HWND handle,POINT cursor) {
     }
 }
 
-WNDPROC prevWndProc;
-
 LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static RECT border_thickness;
@@ -156,11 +163,12 @@ LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     case WM_SYSCOMMAND:
         if (wParam == 0xF032) {
             JNIEnv* env = getJniEnv();
-            if (thisObj == NULL) {
-                std::cout << "maximizeOrRestore thisObj is null" << std::endl;
-            }
-            else {
+            WindowData windowData = windowDataByWindowHandle[hWnd];
+            if (windowData.thisObject == NULL) {
+                std::cout << "thisObject is null" << std::endl;
+            } else {
                 if (env != NULL) {
+                    jobject thisObj = windowData.thisObject;
                     jclass cls = env->GetObjectClass(thisObj);
                     if (cls != NULL) {
                         jmethodID maximizeOrRestoreVal = env->GetMethodID(cls, "maximizeOrRestore", "()V");
@@ -177,10 +185,13 @@ LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         {   
             if (maximized(hWnd)) {
                 JNIEnv* env = getJniEnv();
-                if (thisObj == NULL) {
+
+                WindowData windowData = windowDataByWindowHandle[hWnd];
+                if (windowData.thisObject == NULL) {
                     std::cout << "maximizeOrRestore thisObj is null" << std::endl;
                 }
                 else {
+                    jobject thisObj = windowData.thisObject;
                     jclass cls = env->GetObjectClass(thisObj);
                     if (env != NULL) {
                         jmethodID maximizeOrRestoreVal = env->GetMethodID(cls, "maximizeOrRestore", "()V");
@@ -203,11 +214,11 @@ LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
                     GET_Y_LPARAM(lParam)
             });
         if (result == HTNOWHERE) {
-            return CallWindowProc(prevWndProc, hWnd, message, wParam, lParam);
+            return CallWindowProc(windowDataByWindowHandle[hWnd].prevWndProc, hWnd, message, wParam, lParam);
         }
         return result;
     }
-    return CallWindowProc(prevWndProc, hWnd, message, wParam, lParam);
+    return CallWindowProc(windowDataByWindowHandle[hWnd].prevWndProc, hWnd, message, wParam, lParam);
 }
 
 HWND handle;
@@ -215,17 +226,21 @@ HWND handle;
 JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_makeWindowsBorderless
   (JNIEnv *env, jobject thisObject, jstring windowName) {
     const char* nameCharPointer = env->GetStringUTFChars(windowName, NULL);
-    jclass cls_foo = env->GetObjectClass(thisObject);
-    jmethodID isMouseInCaptionVal = env->GetMethodID(cls_foo, "isMouseInCaption", "(II)Z");
-    isMouseInCaption = &isMouseInCaptionVal;
-    thisObj = env->NewGlobalRef(thisObject);
-    bool inCaption = (bool)(env->CallBooleanMethod(thisObj, *isMouseInCaption, 0, 0) == JNI_TRUE);
-    //HWND handle;
+    string title = nameCharPointer;
+    jobject thisObj = env->NewGlobalRef(thisObject);
     handle = FindWindowA(NULL,nameCharPointer);
     SetWindowLong(handle, GWL_STYLE, WS_VISIBLE | WS_POPUP  | WS_CLIPCHILDREN
         | WS_CLIPSIBLINGS | WS_THICKFRAME  | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX );
 
-    prevWndProc = (WNDPROC)SetWindowLongPtrW(handle, GWLP_WNDPROC, (LONG_PTR)NewWndProc);
+    WNDPROC prevWndProc = (WNDPROC)SetWindowLongPtrW(handle, GWLP_WNDPROC, (LONG_PTR)NewWndProc);
+    WindowData windowData;
+    windowData.hwnd = handle;
+    windowData.prevWndProc = prevWndProc;
+    windowData.thisObject = thisObj;
+    windowData.title = title;
+        
+    windowDataByWindowTitle[title] = windowData;
+    windowDataByWindowHandle[handle] = windowData;
     COLORREF BLACK = 0x00000000;
     DwmSetWindowAttribute(handle, DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, &BLACK, sizeof(BLACK));
     DwmSetWindowAttribute(handle, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, &BLACK, sizeof(BLACK));
@@ -233,6 +248,6 @@ JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_makeWindowsBor
 
 JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_setWindowDraggable
 (JNIEnv *env, jobject thisObject, jboolean isDraggable) {
-    draggable = (bool)(isDraggable == JNI_TRUE);
+    //TODO delete this unused method
 }
 

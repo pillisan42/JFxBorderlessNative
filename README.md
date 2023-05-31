@@ -16,7 +16,7 @@ Tested with Java 8+ and Windows 7,10 and 11
 
 ## Import in your project
 
-    implementation("io.github.pillisan42:jfx-borderless-native:1.0.7")
+    implementation("io.github.pillisan42:jfx-borderless-native:1.0.8")
 
 ## Quick sample
 
@@ -64,10 +64,13 @@ C/C++ -> General -> Additional Include Directories C:\PathToJRE\zulu8.70.0.23-ca
 
 You may need to install vcredist 2019 for making this library work
 
-## TODO Support
+## Support
 - [x] Clean sln solution
 - [x] Support JDK8 and JFX8 
 - [x] Release on Maven central
 - [X] Stabilisation
 - [X] Test on Windows 7 and 10
+- [X] Multi Stage support
+- [ ] Remove borderless from ram support when windows is removed
+- [ ] Support Windows 11 Snap layout menu (There is still a bug with maximize button not working in this case ???)
 
