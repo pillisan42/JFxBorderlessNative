@@ -20,7 +20,7 @@ Tested with Java 8+ and Windows 7,10 and 11
 
 ## Quick sample
 
-    static   //static initializer code
+    static
     {
         BorderlessNative.loadJarDll("deploy");
     }
@@ -28,14 +28,16 @@ Tested with Java 8+ and Windows 7,10 and 11
     @Override
     public void start(final Stage primaryStage) {
         [...]
-        Scene scene=new Scene(root, 300, 250, Color.RED);
+        Scene scene=new Scene(root, 300, 250, Color.TRANSPARENT);
         primaryStage.setScene(scene);
         BorderlessNative borderlessNative=showBorderlessAeroSnap(primaryStage,movePane);
         maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
     }
 
     public BorderlessNative showBorderlessAeroSnap(Stage primaryStage,Node... moveNode) {
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        //For more details see src/test/java/io/github/pillisan42/Sample.java
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setOpacity(0.8);
         primaryStage.show();
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
@@ -71,6 +73,7 @@ You may need to install vcredist 2019 for making this library work
 - [X] Stabilisation
 - [X] Test on Windows 7 and 10
 - [X] Multi Stage support
+- [ ] Clean unused native jni method
 - [ ] Remove borderless from ram support when windows is removed
 - [ ] Support Windows 11 Snap layout menu (There is still a bug with maximize button not working in this case ???)
 
