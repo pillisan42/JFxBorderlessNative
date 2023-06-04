@@ -6,6 +6,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -133,6 +135,11 @@ public class BorderlessNative {
         this.maximizeNode = maximizeNode;
     }
 
+    public void setWindowBorderless(final Stage stage) {
+        makeWindowsBorderless(stage.getTitle());
+        stage.setOnCloseRequest(event -> removeWindowsBorderlessData(stage.getTitle()));
+    }
+
     /**
      * Make windows borderless.
      *
@@ -140,13 +147,13 @@ public class BorderlessNative {
      */
     public native void makeWindowsBorderless(final String windowName);
 
+
     /**
-     * Sets window draggable.
+     * Make windows borderless.
      *
-     * @param isDraggable the is draggable
+     * @param windowName the window name
      */
-    @SuppressWarnings("unused") // false positive JNI Method called from native
-    public native void setWindowDraggable(boolean isDraggable);
+    public native void removeWindowsBorderlessData(final String windowName);
 
     /**
      * Perce of 2 rect double.
@@ -186,7 +193,7 @@ public class BorderlessNative {
         Rectangle2D currentBound = getStageBound();
         Screen selectedScreen = getSelectedScreen(currentBound);
         if (isMaximized(selectedScreen, currentBound)) {
-            if(previousBound!=null) {
+            if (previousBound != null) {
                 stage.setX(previousBound.getMinX());
                 stage.setY(previousBound.getMinY());
                 stage.setWidth(previousBound.getWidth());
@@ -238,30 +245,26 @@ public class BorderlessNative {
         return primaryScreenBounds.equals(currentBound);
     }
 
-    /**
-     * Pick screen node.
-     *
-     * @param node    the node
-     * @param screenX the screen x
-     * @param screenY the screen y
-     * @return the node
-     */
-    public static Node getTopNodeUnderMouse(Node node, double screenX, double screenY) {
-        Bounds bounds = node.localToScreen(node.getLayoutBounds());
+    public Node isNodeUnderMouse(Node node, double screenX, double screenY) {
+        return isNodeUnderMouse(node, node, screenX, screenY);
+    }
+
+    public Node isNodeUnderMouse(Node searchedNode, Node currentNode, double screenX, double screenY) {
+        Bounds bounds = currentNode.localToScreen(currentNode.getLayoutBounds());
         // check if the given node has the point inside it, or else we drop out
         if (!bounds.contains(screenX, screenY)) return null;
-
-        Node result = node;
-        if (node instanceof Parent) {
-            List<Node> children = ((Parent) node).getChildrenUnmodifiable();
+        if (!searchedNode.equals(currentNode) && currentNode instanceof Control && !(currentNode instanceof Label))
+            return currentNode;
+        Node result = searchedNode;
+        if (currentNode instanceof Parent) {
+            List<Node> children = ((Parent) currentNode).getChildrenUnmodifiable();
             for (Node child : children) {
                 Bounds childBounds = child.localToScreen(child.getLayoutBounds());
-                if (child.isVisible() && !child.isMouseTransparent() && childBounds.contains(screenX, screenY)) {
-                    Node subChild = getTopNodeUnderMouse(child, screenX, screenY);
+                if (child.isVisible() && !child.isDisable() && childBounds.contains(screenX, screenY)) {
+                    Node subChild = isNodeUnderMouse(searchedNode, child, screenX, screenY);
                     if (subChild != null) {
                         result = subChild;
-                    } else {
-                        result = child;
+                        break;
                     }
                 }
             }
@@ -281,7 +284,7 @@ public class BorderlessNative {
     public boolean isMouseInCaption(int x, int y) {
         if (captions != null) {
             for (Node captionNode : captions) {
-                Node pickedNode = getTopNodeUnderMouse(captionNode, x, y);
+                Node pickedNode = isNodeUnderMouse(captionNode, x, y);
                 String pickedId = pickedNode != null ? pickedNode.getId() : null;
                 boolean inCaption = captionNode.equals(pickedNode);
                 if (inCaption) {
@@ -304,9 +307,9 @@ public class BorderlessNative {
         boolean result;
         if (maximizeNode != null) {
             Bounds childBounds = maximizeNode.localToScreen(maximizeNode.getLayoutBounds());
-            result= childBounds.contains(x,y);
+            result = childBounds.contains(x, y);
         } else {
-            result= false;
+            result = false;
         }
         return result;
     }

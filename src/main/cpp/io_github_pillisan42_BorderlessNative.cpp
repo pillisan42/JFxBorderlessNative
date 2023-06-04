@@ -221,14 +221,12 @@ LRESULT CALLBACK NewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
     return CallWindowProc(windowDataByWindowHandle[hWnd].prevWndProc, hWnd, message, wParam, lParam);
 }
 
-HWND handle;
-
 JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_makeWindowsBorderless
   (JNIEnv *env, jobject thisObject, jstring windowName) {
     const char* nameCharPointer = env->GetStringUTFChars(windowName, NULL);
     string title = nameCharPointer;
     jobject thisObj = env->NewGlobalRef(thisObject);
-    handle = FindWindowA(NULL,nameCharPointer);
+    HWND handle = FindWindowA(NULL,nameCharPointer);
     SetWindowLong(handle, GWL_STYLE, WS_VISIBLE | WS_POPUP  | WS_CLIPCHILDREN
         | WS_CLIPSIBLINGS | WS_THICKFRAME  | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX );
 
@@ -246,8 +244,13 @@ JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_makeWindowsBor
     DwmSetWindowAttribute(handle, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, &BLACK, sizeof(BLACK));
 }
 
-JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_setWindowDraggable
-(JNIEnv *env, jobject thisObject, jboolean isDraggable) {
-    //TODO delete this unused method
-}
+JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_removeWindowsBorderlessData
+  (JNIEnv *env, jobject thisObject, jstring windowName) {
+    const char* nameCharPointer = env->GetStringUTFChars(windowName, NULL);
+    string title = nameCharPointer;
+    jobject thisObj = env->NewGlobalRef(thisObject);
+    HWND handle = FindWindowA(NULL,nameCharPointer);
 
+    windowDataByWindowTitle.erase(title);
+    windowDataByWindowHandle.erase(handle);
+  }

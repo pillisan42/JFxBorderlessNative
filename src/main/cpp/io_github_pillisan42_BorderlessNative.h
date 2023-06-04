@@ -17,11 +17,11 @@ JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_makeWindowsBor
 
 /*
  * Class:     io_github_pillisan42_BorderlessNative
- * Method:    setWindowDraggable
- * Signature: (Z)V
+ * Method:    removeWindowsBorderlessData
+ * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_setWindowDraggable
-  (JNIEnv *, jobject, jboolean);
+JNIEXPORT void JNICALL Java_io_github_pillisan42_BorderlessNative_removeWindowsBorderlessData
+  (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

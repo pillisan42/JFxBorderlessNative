@@ -16,7 +16,7 @@ Tested with Java 8+ and Windows 7,10 and 11
 
 ## Import in your project
 
-    implementation("io.github.pillisan42:jfx-borderless-native:1.0.8")
+    implementation("io.github.pillisan42:jfx-borderless-native:1.0.9")
 
 ## Quick sample
 
@@ -41,7 +41,7 @@ Tested with Java 8+ and Windows 7,10 and 11
         primaryStage.show();
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
-        borderlessNative.makeWindowsBorderless("Sample");
+        borderlessNative.setWindowBorderless(primaryStage);
         return borderlessNative;
     }
 
@@ -73,7 +73,8 @@ You may need to install vcredist 2019 for making this library work
 - [X] Stabilisation
 - [X] Test on Windows 7 and 10
 - [X] Multi Stage support
-- [ ] Clean unused native jni method
-- [ ] Remove borderless from ram support when windows is removed
+- [x] Easier support of complicated scenegraph for move node detection
+- [x] Clean unused native jni method
+- [x] Remove borderless from ram support when windows is removed
 - [ ] Support Windows 11 Snap layout menu (There is still a bug with maximize button not working in this case ???)
 

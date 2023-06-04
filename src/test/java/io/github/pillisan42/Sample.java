@@ -61,6 +61,7 @@ public class Sample extends Application {
         VBox vBox=new VBox();
         root.getChildren().add(vBox);
         HBox headerHBox=new HBox();
+        headerHBox.setId("header");
         StackPane movePane=new StackPane();
         HBox.setHgrow(movePane,Priority.ALWAYS);
         headerHBox.setStyle(DEFAULT_HEADER_STYLE);
@@ -84,7 +85,7 @@ public class Sample extends Application {
         vBox.getChildren().add(stackPane);
         Scene scene=new Scene(root, 300, 250, Color.TRANSPARENT);
         stage.setScene(scene);
-        BorderlessNative borderlessNative=showBorderlessAeroSnap(stage,maximizeButton,headerHBox,movePane);
+        BorderlessNative borderlessNative=showBorderlessAeroSnap(stage,maximizeButton,headerHBox,stackPane);
         maximizeButton.setOnAction(event -> borderlessNative.maximizeOrRestore());
     }
 
@@ -95,7 +96,7 @@ public class Sample extends Application {
         BorderlessNative borderlessNative= new BorderlessNative(primaryStage);
         borderlessNative.setCaptionNode(moveNode);
         //borderlessNative.setMaximizeNode(maximizeNode);
-        borderlessNative.makeWindowsBorderless(primaryStage.getTitle());
+        borderlessNative.setWindowBorderless(primaryStage);
         return borderlessNative;
     }
 
