@@ -1,23 +1,21 @@
 plugins {
     java
-    id("org.openjfx.javafxplugin") version "0.0.13"
     id("net.researchgate.release") version "3.0.2"
     `maven-publish`
     signing
 }
 
 group = "io.github.pillisan42"
+val jdk8Path: String by project
 
 repositories {
     mavenCentral()
 }
 
-javafx {
-    version = "19"
-    modules = listOf("javafx.controls")
-}
-
 dependencies {
+    /*
+    implementation()*/
+    implementation(files("$jdk8Path/jre/lib/ext/jfxrt.jar"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
@@ -34,17 +32,6 @@ tasks.getByName<Test>("test") {
 tasks.withType<JavaCompile> {
     options.release.set(8)
 }
-
-/*tasks.create<Jar>("javadocJar") {
-    archiveClassifier.set("javadoc")
-    from(tasks.getByName("javadoc"))
-}
-
-tasks.create<Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}*/
-
 
 publishing {
     repositories {
@@ -98,8 +85,6 @@ publishing {
 }
 
 release {
-    //versionProperties.set(listOf(version))
-    //tagTemplate.set("JFxBorderlessNative_${version}")
     buildTasks.set(listOf("build","publish"))
     versionPropertyFile.set("gradle.properties")
 }
